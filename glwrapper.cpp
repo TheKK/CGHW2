@@ -1,4 +1,5 @@
-#include <GLFW/glfw3.h>
+#include <SDL_opengl.h>
+
 #include "glwrapper.h"
 
 #define abs(a) ((a)>=0?(a):-(a))
