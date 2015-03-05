@@ -3,6 +3,7 @@
 
 namespace GLWrapper
 {
+	void setClearColor(double r, double g, double b, double a);
 	void clearScreen();
 	void drawPoint(float, float);
 	void setPointColor(float r, float g, float b);

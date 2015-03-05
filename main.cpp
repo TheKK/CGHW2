@@ -1,52 +1,93 @@
-#include <GLFW/glfw3.h>
+#include <SDL.h>
 #include <cstdlib>
+
 #include "hw2.h"
 #include "glwrapper.h"
 
-static void render();
+static SDL_Window* gWindow = nullptr;
+static SDL_GLContext gGLContext;
+static int appIsRunning = 1;
 
-int main(void)
+static int
+init()
 {
-    GLFWwindow* window;
+	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
+		return -1;
 
-    // Initialize the library
-    if (!glfwInit())
-        return -1;
+	gWindow = SDL_CreateWindow(
+		"Hi",
+		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		200, 200,
+		SDL_WINDOW_OPENGL);
+	if (!gWindow)
+		return -1;
 
-    // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(320, 320, "CGHW2", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return EXIT_FAILURE;
-    }
+	gGLContext = SDL_GL_CreateContext(gWindow);
 
-    // Make the window's context current
-    glfwMakeContextCurrent(window);
-
-    // Loop until the user closes the window
-    while (!glfwWindowShouldClose(window))
-    {
-        // Render here
-        render();
-
-        // Swap front and back buffers
-        glfwSwapBuffers(window);
-
-        // Poll for and process events
-        glfwPollEvents();
-    }
-
-    glfwTerminate();
-    return EXIT_SUCCESS;
+	return 0;
 }
 
-static void render()
+static void
+quit()
 {
-    GLWrapper::clearScreen();
-    // Complete your code here
-    // if a is press??
-    HW2::drawCircle(0, 0, 0.25, 200);
-    // else draw Model
+	SDL_Quit();
 
+	if (gWindow) {
+		SDL_DestroyWindow(gWindow);
+		gWindow = NULL;
+	}
+
+	SDL_GL_DeleteContext(gGLContext);
+}
+
+static void
+eventHandler(const SDL_Event* event)
+{
+	if (event->type == SDL_QUIT)
+		appIsRunning = false;
+}
+
+static void
+update()
+{
+}
+
+static void
+render()
+{
+	GLWrapper::setClearColor(0.3, 0.3, 0.3, 1.0);
+	GLWrapper::clearScreen();
+
+	/*
+	 * Do what i want here
+	 */
+
+	SDL_GL_SwapWindow(gWindow);
+}
+
+
+int
+main(int argc, char* argv[])
+{
+	SDL_Event event;
+
+	if (init()) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
+		quit();
+
+		return EXIT_FAILURE;
+	}
+
+	while (appIsRunning) {
+		while (SDL_PollEvent(&event))
+			eventHandler(&event);
+		update();
+		render();
+
+		SDL_Delay(30);
+	}
+
+	quit();
+
+	return EXIT_SUCCESS;
 }
