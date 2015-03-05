@@ -1,17 +1,18 @@
-CFLAGS = -std=c++0x -g -I./inc `pkg-config --cflags sdl2 gl`
+CXX = g++
+
+CXXFLAGS = -std=c++0x -g `pkg-config --cflags sdl2 gl`
 LIBS = `pkg-config --libs sdl2 gl`
 
-HW2.exe: main.o hw2.o glwrapper.o
-	g++ -o HW2.exe main.o hw2.o glwrapper.o $(LIBS)
+OUT_EXE = HW2
 
-main.o: main.cpp hw2.h
-	g++ $(CFLAGS) -c main.cpp
+all: $(OUT_EXE)
 
-hw2.o: hw2.h
-	g++ $(CFLAGS) -c hw2.cpp
+$(OUT_EXE): main.o hw2.o glwrapper.o
+	$(CXX) $^ $(LIBS) -o $@
 
-glwrapper.o: glwrapper.h
-	g++ $(CFLAGS) -c glwrapper.cpp
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $<
 
+.PHONY: clean
 clean:
-	del *.o *.exe
+	rm *.o $(OUT_EXE)
