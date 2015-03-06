@@ -55,12 +55,14 @@ update()
 static void
 render()
 {
-	GLWrapper::setClearColor(0.3, 0.3, 0.3, 1.0);
+	GLWrapper::setClearColor(0.3, 0.3, 0.3, 1.f);
 	GLWrapper::clearScreen();
 
 	/*
 	 * Do what i want here
 	 */
+	GLWrapper::setPointColor(0.2, 1.f, 0.f);
+	HW2::drawCircle(0.f, 0.f, 0.5, 10);
 
 	SDL_GL_SwapWindow(gWindow);
 }

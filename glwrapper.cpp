@@ -28,6 +28,26 @@ void GLWrapper::setPointColor(float r, float g, float b)
 
 void GLWrapper::drawLine(float x1, float y1, float x2, float y2)
 {
-	// Complete your code here, you can only use GLWrapper::drawPoint
-	// To determine how many samples you want, You may need to calculate the pixel width
+	/* TODO Use greater algorithm if possible */
+	float tx, ty;
+	float dx = x2 - x1;
+	float dy = y2 - y1;
+	const int stop = 20;
+	int step = 0;
+
+	glBegin(GL_POINTS);
+	glVertex2f(x1, y1);
+
+	while (1) {
+		++step;
+		if (step > stop)
+			break;
+
+		tx = x1 + dx * ((double) step / (double) stop);
+		ty = y1 + dy * ((double) step / (double) stop);
+		glVertex2f(tx, ty);
+	}
+
+	glVertex2f(x2, y2);
+	glEnd();
 }
