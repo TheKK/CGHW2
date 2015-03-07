@@ -6,7 +6,7 @@
 #define M_PI    3.1415926535
 #endif
 
-#define DEGREE2ARC(DEGREE) DEGREE * M_PI / 180.0
+#define DEGREE2ARC(DEGREE) ((DEGREE) * M_PI / 180.0)
 
 void HW2::drawCircle(float cx, float cy, float r, int seg)
 {
