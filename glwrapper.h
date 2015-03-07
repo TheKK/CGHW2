@@ -3,6 +3,8 @@
 
 namespace GLWrapper
 {
+	void setViewport(int x, int y, int w, int h);
+
 	void setClearColor(double r, double g, double b, double a);
 	void clearScreen();
 

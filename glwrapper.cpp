@@ -4,6 +4,11 @@
 
 #define abs(a) ((a)>=0?(a):-(a))
 
+void GLWrapper::setViewport(int x, int y, int w, int h)
+{
+	glViewport(x, y, w, h);
+}
+
 void GLWrapper::setClearColor(double r, double g, double b, double a)
 {
 	glClearColor(r, g, b, a);
