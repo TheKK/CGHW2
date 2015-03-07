@@ -4,9 +4,18 @@
 #include "hw2.h"
 #include "glwrapper.h"
 
+namespace {
+	const int kInitWindowWidth = 300;
+	const int kInitWindowHeight = 300;
+}
+
 static SDL_Window* gWindow = nullptr;
 static SDL_GLContext gGLContext;
+
 static int appIsRunning = 1;
+
+static int logicalWindowWidth = 3;
+static int logicalWindowHeight = 3;
 
 static int
 init()
@@ -17,7 +26,7 @@ init()
 	gWindow = SDL_CreateWindow(
 		"Hi",
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		600, 400,
+		kInitWindowWidth, kInitWindowHeight,
 		SDL_WINDOW_OPENGL);
 	if (!gWindow)
 		return -1;
@@ -41,41 +50,6 @@ quit()
 }
 
 static void
-windowResize(int windowWidth, int windowHeight)
-{
-	float windowAspect = (float) windowWidth / (float) windowHeight;
-	float viewportAspect = 1.0;
-
-	int viewportWidth, viewportHeight;
-	int horizontalBlankOffset, virticalBlankOffset;
-
-	if (windowAspect > viewportAspect) {
-		viewportWidth = floor((float) windowHeight * viewportAspect);
-		viewportHeight = windowHeight;
-
-		horizontalBlankOffset = (windowWidth - viewportWidth) / 2;
-		virticalBlankOffset = 0;
-
-	} else if (windowAspect < viewportAspect) {
-		viewportWidth = windowWidth;
-		viewportHeight = floor((float) windowWidth / viewportAspect);
-
-		horizontalBlankOffset = 0;
-		virticalBlankOffset = (windowHeight - viewportHeight) / 2;
-
-	} else if (windowAspect == viewportAspect) {
-		viewportWidth = windowWidth;
-		viewportHeight = windowHeight;
-
-		horizontalBlankOffset = 0;
-		virticalBlankOffset = 0;
-	}
-
-	GLWrapper::setViewport(horizontalBlankOffset, virticalBlankOffset,
-			       viewportWidth, viewportHeight);
-}
-
-static void
 eventHandler(const SDL_Event& event)
 {
 	switch (event.type) {
@@ -94,7 +68,7 @@ eventHandler(const SDL_Event& event)
 			int newWidth = event.window.data1;
 			int newHeight = event.window.data2;
 
-			windowResize(newWidth, newHeight);
+			HW2::windowResizeHandler(newWidth, newHeight);
 		}
 		break;
 	}
@@ -115,7 +89,9 @@ render()
 	 * Do what i want here
 	 */
 	GLWrapper::setDrawColor(0.2, 1.f, 0.f);
-	HW2::drawCircle(0.f, 0.f, 0.5, 10);
+	HW2::drawPixel(0, 0);
+	HW2::drawPixel(1, 1);
+	HW2::drawPixel(2, 2);
 
 	SDL_GL_SwapWindow(gWindow);
 }
@@ -131,6 +107,9 @@ main(int argc, char* argv[])
 
 		return EXIT_FAILURE;
 	}
+
+	HW2::setRenderLogicalSize(5, 3);
+	HW2::windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
 
 	while (appIsRunning) {
 		while (SDL_PollEvent(&event))
