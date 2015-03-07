@@ -71,12 +71,11 @@ render()
 	/*
 	 * Do what i want here
 	 */
-	GLWrapper::setPointColor(0.2, 1.f, 0.f);
+	GLWrapper::setDrawColor(0.2, 1.f, 0.f);
 	HW2::drawCircle(0.f, 0.f, 0.5, 10);
 
 	SDL_GL_SwapWindow(gWindow);
 }
-
 
 int
 main(int argc, char* argv[])
