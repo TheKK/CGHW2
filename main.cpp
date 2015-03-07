@@ -41,10 +41,20 @@ quit()
 }
 
 static void
-eventHandler(const SDL_Event* event)
+eventHandler(const SDL_Event& event)
 {
-	if (event->type == SDL_QUIT)
+	switch (event.type) {
+	case SDL_QUIT:
 		appIsRunning = false;
+		break;
+	case SDL_KEYDOWN:
+		switch (event.key.keysym.scancode) {
+		case SDL_SCANCODE_Q:
+			appIsRunning = false;
+			break;
+		}
+		break;
+	}
 }
 
 static void
@@ -82,7 +92,7 @@ main(int argc, char* argv[])
 
 	while (appIsRunning) {
 		while (SDL_PollEvent(&event))
-			eventHandler(&event);
+			eventHandler(event);
 		update();
 		render();
 
