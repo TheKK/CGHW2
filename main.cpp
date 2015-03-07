@@ -41,6 +41,41 @@ quit()
 }
 
 static void
+windowResize(int windowWidth, int windowHeight)
+{
+	float windowAspect = (float) windowWidth / (float) windowHeight;
+	float viewportAspect = 1.0;
+
+	int viewportWidth, viewportHeight;
+	int horizontalBlankOffset, virticalBlankOffset;
+
+	if (windowAspect > viewportAspect) {
+		viewportWidth = floor((float) windowHeight * viewportAspect);
+		viewportHeight = windowHeight;
+
+		horizontalBlankOffset = (windowWidth - viewportWidth) / 2;
+		virticalBlankOffset = 0;
+
+	} else if (windowAspect < viewportAspect) {
+		viewportWidth = windowWidth;
+		viewportHeight = floor((float) windowWidth / viewportAspect);
+
+		horizontalBlankOffset = 0;
+		virticalBlankOffset = (windowHeight - viewportHeight) / 2;
+
+	} else if (windowAspect == viewportAspect) {
+		viewportWidth = windowWidth;
+		viewportHeight = windowHeight;
+
+		horizontalBlankOffset = 0;
+		virticalBlankOffset = 0;
+	}
+
+	GLWrapper::setViewport(horizontalBlankOffset, virticalBlankOffset,
+			       viewportWidth, viewportHeight);
+}
+
+static void
 eventHandler(const SDL_Event& event)
 {
 	switch (event.type) {
@@ -52,6 +87,14 @@ eventHandler(const SDL_Event& event)
 		case SDL_SCANCODE_Q:
 			appIsRunning = false;
 			break;
+		}
+		break;
+	case SDL_WINDOWEVENT:
+		if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+			int newWidth = event.window.data1;
+			int newHeight = event.window.data2;
+
+			windowResize(newWidth, newHeight);
 		}
 		break;
 	}
