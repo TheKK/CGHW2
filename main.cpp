@@ -17,7 +17,7 @@ init()
 	gWindow = SDL_CreateWindow(
 		"Hi",
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		200, 200,
+		600, 400,
 		SDL_WINDOW_OPENGL);
 	if (!gWindow)
 		return -1;
