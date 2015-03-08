@@ -35,13 +35,13 @@ void HW2::drawPixel(int x, int y)
 	GLWrapper::drawPoint(realX, realY);
 }
 
-void HW2::drawCircle(float cx, float cy, float r, int seg)
+void HW2::drawCircle(int cx, int cy, int r, int seg)
 {
 	float degreeForEachSeg = (360.0 / (float) seg);
 	float x1, y1, x2, y2;
 
 	x1 = cx + r;
-	y1 = 0;
+	y1 = cy;
 
 	for (int i = 1; i <= seg; ++i) {
 		if (i & 1) {
