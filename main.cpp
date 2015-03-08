@@ -89,9 +89,7 @@ render()
 	 * Do what i want here
 	 */
 	GLWrapper::setDrawColor(0.2, 1.f, 0.f);
-	HW2::drawPixel(0, 0);
-	HW2::drawPixel(1, 1);
-	HW2::drawPixel(2, 2);
+	HW2::drawCircle(150, 150, 50, 8);
 
 	SDL_GL_SwapWindow(gWindow);
 }
@@ -108,7 +106,7 @@ main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	HW2::setRenderLogicalSize(5, 3);
+	HW2::setRenderLogicalSize(kInitWindowWidth, kInitWindowHeight);
 	HW2::windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
 
 	while (appIsRunning) {

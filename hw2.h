@@ -4,7 +4,8 @@
 namespace HW2
 {
 	void drawPixel(int x, int y);
-	void drawCircle(float x, float y, float r, int seg);
+	void drawLine(int x0, int y0, int x1, int y1);
+	void drawCircle(int x, int y, int r, int seg);
 	// design your function interface here
 	// ex.
 	// Mesh *loadMesh(const char *filename)

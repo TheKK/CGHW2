@@ -2,6 +2,7 @@
 #include "glwrapper.h"
 #include <SDL_opengl.h>
 #include <cmath>
+#include <algorithm>
 
 #ifndef M_PI
 #define M_PI    3.1415926535
@@ -22,6 +23,47 @@ static void updatePixelInfo()
 				   (float) renderer.logicalWidth);
 
 	glPointSize(renderer.pixelSize);
+}
+
+void HW2::drawLine(int x0, int y0, int x1, int y1)
+{
+	int dx, dy;
+	int error;
+	int yStep, yCurrent;
+	bool isSteep = abs(y1 - y0) > abs(x1 - x0);
+
+	if (isSteep) {
+		std::swap(x0, y0);
+		std::swap(x1, y1);
+	}
+
+	if (x0 > x1) {
+		std::swap(x0, x1);
+		std::swap(y0, y1);
+	}
+
+	dx = x1 - x0;
+	dy = abs(y1 - y0);
+	error = dx / 2;
+	yCurrent = y0;
+
+	if (y0 < y1)
+		yStep = 1;
+	else
+		yStep = -1;
+
+	for (int xCurrent = x0; xCurrent <= x1; ++xCurrent) {
+		if (isSteep)
+			drawPixel(yCurrent, xCurrent);
+		else
+			drawPixel(xCurrent, yCurrent);
+
+		error -= dy;
+		if (error < 0) {
+			yCurrent += yStep;
+			error += dx;
+		}
+	}
 }
 
 void HW2::drawPixel(int x, int y)
@@ -52,7 +94,7 @@ void HW2::drawCircle(int cx, int cy, int r, int seg)
 			y1 = cy + (r * sin(DEGREE2ARC(degreeForEachSeg * i)));
 		}
 
-		GLWrapper::drawLine(x1, y1, x2, y2);
+		HW2::drawLine(x1, y1, x2, y2);
 	}
 }
 
