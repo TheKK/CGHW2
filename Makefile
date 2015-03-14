@@ -8,11 +8,13 @@ OUT_EXE = HW2
 all: $(OUT_EXE)
 
 $(OUT_EXE): main.o hw2.o glwrapper.o
-	$(CXX) $^ $(LIBS) -o $@
+	@$(CXX) $^ $(LIBS) -o $@
+	@echo "     LD     " $(notdir $@)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+	@$(CXX) $(CXXFLAGS) -c $< -o $@
+	@echo "     CXX    " $(notdir $@)
 
 .PHONY: clean
 clean:
-	rm *.o $(OUT_EXE)
+	@rm *.o $(OUT_EXE)
