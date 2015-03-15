@@ -7,7 +7,7 @@ OUT_EXE = HW2
 
 all: $(OUT_EXE)
 
-$(OUT_EXE): main.o hw2.o glwrapper.o
+$(OUT_EXE): main.o hw2.o glwrapper.o objLoader.o
 	@$(CXX) $^ $(LIBS) -o $@
 	@echo "     LD     " $(notdir $@)
 
@@ -24,3 +24,4 @@ clean:
 	@rm *.o $(OUT_EXE)
 
 test: testRunner
+	@./$<
