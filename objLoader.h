@@ -1,3 +1,6 @@
+#ifndef OBJLOADER_H
+#define OBJLOADER_H
+
 #include <array>
 #include <vector>
 
@@ -21,3 +24,5 @@ private:
 	std::vector<std::array<float, 3>> vertexUVs;
 	std::vector<std::array<std::array<uint32_t, 3>, 3>> faces;
 };
+
+#endif /* OBJLOADER_H */
