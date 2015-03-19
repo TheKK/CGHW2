@@ -1,8 +1,11 @@
 #include "hw2.h"
 #include "glwrapper.h"
+
 #include <SDL_opengl.h>
 #include <cmath>
 #include <algorithm>
+#include <vector>
+#include <array>
 
 #ifndef M_PI
 #define M_PI    3.1415926535
@@ -95,6 +98,21 @@ void HW2::drawCircle(int cx, int cy, int r, int seg)
 		}
 
 		HW2::drawLine(x1, y1, x2, y2);
+	}
+}
+
+void HW2::drawObj(const ObjLoader& loader)
+{
+	const std::vector<std::array<float, 3>>& vertice = loader.getVertice();
+	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces = loader.getFaces();;
+
+	for (const auto& face : faces) {
+		drawLine(vertice[face[0][0]][0] * 200 + 150, vertice[face[0][0]][1] * 200 + 150,
+			 vertice[face[1][0]][0] * 200 + 150, vertice[face[1][0]][1] * 200 + 150);
+		drawLine(vertice[face[1][0]][0] * 200 + 150, vertice[face[1][0]][1] * 200 + 150,
+			 vertice[face[2][0]][0] * 200 + 150, vertice[face[2][0]][1] * 200 + 150);
+		drawLine(vertice[face[2][0]][0] * 200 + 150, vertice[face[2][0]][1] * 200 + 150,
+			 vertice[face[0][0]][0] * 200 + 150, vertice[face[0][0]][1] * 200 + 150);
 	}
 }
 

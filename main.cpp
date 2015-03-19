@@ -3,10 +3,11 @@
 
 #include "hw2.h"
 #include "glwrapper.h"
+#include "objLoader.h"
 
 namespace {
-	const int kInitWindowWidth = 300;
-	const int kInitWindowHeight = 300;
+	const int kInitWindowWidth = 800;
+	const int kInitWindowHeight = 800;
 }
 
 static SDL_Window* gWindow = nullptr;
@@ -16,6 +17,8 @@ static int appIsRunning = 1;
 
 static int logicalWindowWidth = 3;
 static int logicalWindowHeight = 3;
+
+ObjLoader objLoader("./cube.obj");
 
 static int
 init()
@@ -90,6 +93,7 @@ render()
 	 */
 	GLWrapper::setDrawColor(0.2, 1.f, 0.f);
 	HW2::drawCircle(150, 150, 50, 8);
+	HW2::drawObj(objLoader);
 
 	SDL_GL_SwapWindow(gWindow);
 }
