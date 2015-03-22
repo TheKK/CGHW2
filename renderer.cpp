@@ -153,10 +153,11 @@ Renderer::drawCircle(int cx, int cy, int r, int seg)
 }
 
 void
-Renderer::drawObj(const ModelAsset& asset)
+Renderer::renderAsset(const ModelAsset& asset, const glm::mat4& modelMatrix)
 {
 	const std::vector<glm::vec3>& vertice = asset.getVertice();
 	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces = asset.getFaces();;
+	const glm::mat4 MVPMatrix = _VPMatrix * modelMatrix;
 	std::array<glm::vec4, 3> pointsToDraw;
 
 	for (const auto& face : faces) {
@@ -168,14 +169,17 @@ Renderer::drawObj(const ModelAsset& asset)
 			}
 		};
 
-		drawLine((_VPMatrix * pointsToDraw[0])[0], (_VPMatrix * pointsToDraw[0])[1],
-			 (_VPMatrix * pointsToDraw[1])[0], (_VPMatrix * pointsToDraw[1])[1]);
+		for (auto& e : pointsToDraw)
+			e = MVPMatrix * e;
 
-		drawLine((_VPMatrix * pointsToDraw[1])[0], (_VPMatrix * pointsToDraw[1])[1],
-			 (_VPMatrix * pointsToDraw[2])[0], (_VPMatrix * pointsToDraw[2])[1]);
+		drawLine(pointsToDraw[0][0], pointsToDraw[0][1],
+			 pointsToDraw[1][0], pointsToDraw[1][1]);
 
-		drawLine((_VPMatrix * pointsToDraw[2])[0], (_VPMatrix * pointsToDraw[2])[1],
-			 (_VPMatrix * pointsToDraw[0])[0], (_VPMatrix * pointsToDraw[0])[1]);
+		drawLine(pointsToDraw[1][0], pointsToDraw[1][1],
+			 pointsToDraw[2][0], pointsToDraw[2][1]);
+
+		drawLine(pointsToDraw[2][0], pointsToDraw[2][1],
+			 pointsToDraw[0][0], pointsToDraw[0][1]);
 	}
 }
 
@@ -199,7 +203,8 @@ Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 	int horizontalBlankOffset, virticalBlankOffset;
 
 	if (windowAspect > viewportAspect) {
-		viewportWidth = floor((float) windowHeight * viewportAspect);
+		viewportWidth = std::round((float) windowHeight *
+					   viewportAspect);
 		viewportHeight = windowHeight;
 
 		horizontalBlankOffset = (windowWidth - viewportWidth) / 2;
@@ -207,7 +212,8 @@ Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 
 	} else if (windowAspect < viewportAspect) {
 		viewportWidth = windowWidth;
-		viewportHeight = floor((float) windowWidth / viewportAspect);
+		viewportHeight = std::round((float) windowWidth /
+					    viewportAspect);
 
 		horizontalBlankOffset = 0;
 		virticalBlankOffset = (windowHeight - viewportHeight) / 2;
@@ -249,7 +255,7 @@ Renderer::setProjectMatrix(const glm::mat4& mat)
 void
 Renderer::_updatePixelInfo()
 {
-	_pixelSize = std::ceil((float) _viewportWidth / (float) _logicalWidth);
+	_pixelSize = std::round((float) _viewportWidth / (float) _logicalWidth);
 
 	GLWrapper::setPointSize(_pixelSize);
 }

@@ -28,7 +28,8 @@ public:
 	void drawPixel(int x, int y);
 	void drawLine(int x0, int y0, int x1, int y1);
 	void drawCircle(int x, int y, int r, int seg);
-	void drawObj(const ModelAsset& asset);
+
+	void renderAsset(const ModelAsset& asset, const glm::mat4& modelMatrix);
 
 	void setRenderLogicalSize(int w, int h);
 	void windowResizeHandler(int windowWidth, int windowHeight);
