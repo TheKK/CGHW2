@@ -19,6 +19,11 @@ void GLWrapper::clearScreen()
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void GLWrapper::setPointSize(int arg)
+{
+	glPointSize(arg);
+}
+
 void GLWrapper::setDrawColor(float r, float g, float b)
 {
 	glColor3f(r, g, b);
