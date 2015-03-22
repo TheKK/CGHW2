@@ -2,19 +2,19 @@
 #include <cstdio>
 #include <string>
 
-#include "objLoader.h"
+#include "modelAsset.h"
 
-ObjLoader::ObjLoader()
+ModelAsset::ModelAsset()
 {
 }
 
-ObjLoader::ObjLoader(const std::string& filePath)
+ModelAsset::ModelAsset(const std::string& filePath)
 {
 	load(filePath);
 }
 
 int
-ObjLoader::load(const std::string& filePath)
+ModelAsset::load(const std::string& filePath)
 {
 	std::ifstream fd(filePath, std::ios::in);
 	std::string lineBuffer;
@@ -51,8 +51,8 @@ ObjLoader::load(const std::string& filePath)
 
 		} else if (sscanf(lineBuffer.c_str(),
 				  "f %u/%u/%u %u/%u/%u %u/%u/%u",
-				  &uintTmp[0][0], &uintTmp[0][1], &uintTmp[0][2], 
-				  &uintTmp[1][0], &uintTmp[1][1], &uintTmp[1][2], 
+				  &uintTmp[0][0], &uintTmp[0][1], &uintTmp[0][2],
+				  &uintTmp[1][0], &uintTmp[1][1], &uintTmp[1][2],
 				  &uintTmp[2][0], &uintTmp[2][1], &uintTmp[2][2])) {
 
 			faces.push_back(uintTmp);
@@ -63,33 +63,33 @@ ObjLoader::load(const std::string& filePath)
 }
 
 void
-ObjLoader::clear()
+ModelAsset::clear()
 {
 	vertice.clear();
 	vertexNormals.clear();
 	faces.clear();
 }
 
-const std::vector<glm::vec3>& 
-ObjLoader::getVertice() const
+const std::vector<glm::vec3>&
+ModelAsset::getVertice() const
 {
 	return vertice;
 }
 
-const std::vector<glm::vec3>& 
-ObjLoader::getVertexNormals() const
+const std::vector<glm::vec3>&
+ModelAsset::getVertexNormals() const
 {
 	return vertexNormals;
 }
 
-const std::vector<glm::vec3>& 
-ObjLoader::getVertexUVs() const
+const std::vector<glm::vec3>&
+ModelAsset::getVertexUVs() const
 {
 	return vertexUVs;
 }
 
 const std::vector<std::array<std::array<uint32_t, 3>, 3>>&
-ObjLoader::getFaces() const
+ModelAsset::getFaces() const
 {
 	return faces;
 }

@@ -1,15 +1,15 @@
-#ifndef OBJLOADER_H
-#define OBJLOADER_H
+#ifndef MODEL_ASSET_H
+#define MODEL_ASSET_H
 
 #include <array>
 #include <vector>
 #include <glm/glm.hpp>
 
-class ObjLoader
+class ModelAsset
 {
 public:
-	ObjLoader();
-	ObjLoader(const std::string& filePath);
+	ModelAsset();
+	ModelAsset(const std::string& filePath);
 
 	int load(const std::string& filePath);
 	void clear();
@@ -26,4 +26,4 @@ private:
 	std::vector<std::array<std::array<uint32_t, 3>, 3>> faces;
 };
 
-#endif /* OBJLOADER_H */
+#endif /* MODEL_ASSET_H */

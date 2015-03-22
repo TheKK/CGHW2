@@ -7,7 +7,7 @@ OUT_EXE = HW2
 
 all: $(OUT_EXE)
 
-$(OUT_EXE): main.o renderer.o glwrapper.o objLoader.o
+$(OUT_EXE): main.o renderer.o glwrapper.o modelAsset.o
 	@$(CXX) $^ $(LIBS) -o $@
 	@echo "     LD     " $(notdir $@)
 

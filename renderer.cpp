@@ -1,8 +1,9 @@
 #include <vector>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
+#include <SDL2/SDL.h>
 
-#include "objLoader.h"
+#include "modelAsset.h"
 #include "glwrapper.h"
 #include "helper.h"
 
@@ -45,6 +46,34 @@ Renderer::create(SDL_Window* window, enum RendererType type)
 	_updateVPMatrix();
 
 	return 0;
+}
+
+std::shared_ptr<ModelAsset>
+Renderer::loadObj(const std::string& filePath)
+{
+	std::shared_ptr<ModelAsset> assetToReturn;
+
+	if (_modelAssets.count(filePath) == 0) {
+		std::string msg = "create: " + filePath;
+
+		assetToReturn.reset(
+			new ModelAsset(filePath),
+			[this, filePath](ModelAsset* asset)
+			{
+				std::string msg = "delete: " + filePath;
+
+				delete asset;
+				this->_modelAssets.erase(filePath);
+				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+					    msg.c_str());
+			});
+		_modelAssets[filePath] = assetToReturn;
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, msg.c_str());
+	} else {
+		assetToReturn = _modelAssets[filePath].lock();
+	}
+
+	return assetToReturn;
 }
 
 void
@@ -119,16 +148,15 @@ Renderer::drawCircle(int cx, int cy, int r, int seg)
 			y1 = cy + (r * sin(DEGREE2ARC(degreeForEachSeg * i)));
 		}
 
-	
 		Renderer::drawLine(x1, y1, x2, y2);
 	}
 }
 
 void
-Renderer::drawObj(const ObjLoader& loader)
+Renderer::drawObj(const ModelAsset& asset)
 {
-	const std::vector<glm::vec3>& vertice = loader.getVertice();
-	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces = loader.getFaces();;
+	const std::vector<glm::vec3>& vertice = asset.getVertice();
+	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces = asset.getFaces();;
 	std::array<glm::vec4, 3> pointsToDraw;
 
 	for (const auto& face : faces) {
