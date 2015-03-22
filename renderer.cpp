@@ -5,6 +5,7 @@
 
 #include "modelAsset.h"
 #include "glwrapper.h"
+#include "modelInstance.h"
 #include "helper.h"
 
 #include "renderer.h"
@@ -227,7 +228,7 @@ Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 	}
 
 	GLWrapper::setViewport(horizontalBlankOffset, virticalBlankOffset,
-			       viewportWidth, viewportHeight);
+		    viewportWidth, viewportHeight);
 
 	_viewportWidth = viewportWidth;
 	_viewportHeight = viewportHeight;
@@ -253,6 +254,19 @@ Renderer::setProjectMatrix(const glm::mat4& mat)
 }
 
 void
+Renderer::setViewPort(int x, int y, int w, int h)
+{
+	_viewportMatrix[0] = glm::vec4((float) w / 2.f, 0.f, 0.f, 0.f);
+	_viewportMatrix[1] = glm::vec4(0.f, (float) h / 2.f, 0.f, 0.f);
+	_viewportMatrix[2] = glm::vec4((float) w / 2.f + x,
+				       (float) h / 2.f + y,
+				       0, 0);
+	_viewportMatrix[3] = glm::vec4(0.f, 0.f, 0.f, 1.f);
+
+	_updateVPMatrix();
+}
+
+void
 Renderer::_updatePixelInfo()
 {
 	_pixelSize = std::round((float) _viewportWidth / (float) _logicalWidth);
@@ -263,5 +277,5 @@ Renderer::_updatePixelInfo()
 void
 Renderer::_updateVPMatrix()
 {
-	_VPMatrix = _projectMatrix * _viewMatrix;
+	_VPMatrix = _viewportMatrix * _projectMatrix * _viewMatrix;
 }

@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 
 class ModelAsset;
+class ModelInstance;
 
 enum RendererType {
 	RENDERER_SOFTWARERENDER = 0x00,
@@ -36,6 +37,7 @@ public:
 
 	void setViewMatrix(const glm::mat4& mat);
 	void setProjectMatrix(const glm::mat4& mat);
+	void setViewPort(int x, int y, int w, int h);
 private:
 	SDL_Window* _window;
 
@@ -43,7 +45,8 @@ private:
 	int _logicalWidth, _logicalHeight;
 	int _pixelSize;
 
-	glm::mat4 _viewMatrix, _projectMatrix, _VPMatrix;
+	glm::mat4 _viewMatrix, _projectMatrix, _viewportMatrix;
+	glm::mat4 _VPMatrix;
 
 	/* TODO resource manager */
 	std::map<std::string, std::weak_ptr<ModelAsset>> _modelAssets;

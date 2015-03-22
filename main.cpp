@@ -6,7 +6,7 @@
 
 #include "renderer.h"
 #include "glwrapper.h"
-#include "modelAsset.h"
+#include "modelInstance.h"
 
 namespace {
 	const int kInitWindowWidth = 800;
@@ -24,7 +24,8 @@ static int logicalWindowHeight = 3;
 
 static glm::mat4 viewMatrix(1.0);
 
-static std::shared_ptr<ModelAsset> testAsset;
+static ModelInstance testInst;
+static ModelInstance testInst2;
 
 static int
 init()
@@ -141,7 +142,8 @@ render()
 	 * Do what i want here
 	 */
 	GLWrapper::setDrawColor(0.2, 1.f, 0.f);
-	gRenderer.drawObj(*testAsset.get());
+	testInst.render(gRenderer);
+	testInst2.render(gRenderer);
 
 	SDL_GL_SwapWindow(gWindow);
 }
@@ -162,7 +164,10 @@ main(int argc, char* argv[])
 	gRenderer.windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
 	gRenderer.setViewMatrix(viewMatrix);
 
-	testAsset = gRenderer.loadObj("cube.obj");
+	testInst.load(gRenderer, "cube.obj");
+	testInst2.load(gRenderer, "cube.obj");
+	testInst2.setModelMatrix(glm::translate(glm::mat4(1.0),
+						glm::vec3(10.f, 0.f, 0.f)));
 
 	while (appIsRunning) {
 		while (SDL_PollEvent(&event))
