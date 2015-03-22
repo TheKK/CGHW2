@@ -37,8 +37,9 @@ Renderer::create(SDL_Window* window, enum RendererType type)
 	_viewportWidth = _logicalWidth = w;
 	_viewportHeight = _logicalHeight = h;
 
-	_projectMatrix = glm::ortho(0, _viewportWidth, -_viewportHeight, 0,
-				    1, 100);
+	_projectMatrix = glm::ortho(0.f, (float) _viewportWidth,
+				    (float) -_viewportHeight, 0.f,
+				    1.f, 100.f);
 
 	_updatePixelInfo();
 	_updateVPMatrix();
@@ -228,5 +229,5 @@ Renderer::_updatePixelInfo()
 void
 Renderer::_updateVPMatrix()
 {
-	_VPMatrix = _viewMatrix;
+	_VPMatrix = _projectMatrix * _viewMatrix;
 }
