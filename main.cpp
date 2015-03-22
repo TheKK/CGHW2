@@ -130,7 +130,6 @@ render()
 	 * Do what i want here
 	 */
 	GLWrapper::setDrawColor(0.2, 1.f, 0.f);
-	gRenderer.drawCircle(150, 150, 50, 8);
 	gRenderer.drawObj(objLoader);
 
 	SDL_GL_SwapWindow(gWindow);
