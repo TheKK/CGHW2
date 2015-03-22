@@ -1,5 +1,6 @@
 #include <vector>
 #include <cmath>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "objLoader.h"
 #include "glwrapper.h"
@@ -7,12 +8,18 @@
 
 #include "renderer.h"
 
-Renderer::Renderer()
+Renderer::Renderer():
+	_viewMatrix(glm::mat4(1.0)),
+	_projectMatrix(glm::ortho(-1, 1, -1, 1, 0, 100)),
+	_VPMatrix(_viewMatrix * _projectMatrix)
 {
 }
 
 Renderer::Renderer(SDL_Window* window, enum RendererType type):
-	_window(window)
+	_window(window),
+	_viewMatrix(glm::mat4(1.0)),
+	_projectMatrix(glm::ortho(-1, 1, -1, 1, 1, 100)),
+	_VPMatrix(_viewMatrix * _projectMatrix)
 {
 	create(_window, type);
 }
@@ -30,17 +37,13 @@ Renderer::create(SDL_Window* window, enum RendererType type)
 	_viewportWidth = _logicalWidth = w;
 	_viewportHeight = _logicalHeight = h;
 
+	_projectMatrix = glm::ortho(0, _viewportWidth, -_viewportHeight, 0,
+				    1, 100);
+
 	_updatePixelInfo();
+	_updateVPMatrix();
 
 	return 0;
-}
-
-void
-Renderer::_updatePixelInfo()
-{
-	_pixelSize = std::ceil((float) _viewportWidth / (float) _logicalWidth);
-
-	GLWrapper::setPointSize(_pixelSize);
 }
 
 void
@@ -123,16 +126,27 @@ Renderer::drawCircle(int cx, int cy, int r, int seg)
 void
 Renderer::drawObj(const ObjLoader& loader)
 {
-	const std::vector<std::array<float, 3>>& vertice = loader.getVertice();
+	const std::vector<glm::vec3>& vertice = loader.getVertice();
 	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces = loader.getFaces();;
+	std::array<glm::vec4, 3> pointsToDraw;
 
 	for (const auto& face : faces) {
-		drawLine(vertice[face[0][0]][0] * 200 + 150, vertice[face[0][0]][1] * 200 + 150,
-			 vertice[face[1][0]][0] * 200 + 150, vertice[face[1][0]][1] * 200 + 150);
-		drawLine(vertice[face[1][0]][0] * 200 + 150, vertice[face[1][0]][1] * 200 + 150,
-			 vertice[face[2][0]][0] * 200 + 150, vertice[face[2][0]][1] * 200 + 150);
-		drawLine(vertice[face[2][0]][0] * 200 + 150, vertice[face[2][0]][1] * 200 + 150,
-			 vertice[face[0][0]][0] * 200 + 150, vertice[face[0][0]][1] * 200 + 150);
+		pointsToDraw = {
+			{
+				glm::vec4(vertice[face[0][0]], 1.0),
+				glm::vec4(vertice[face[1][0]], 1.0),
+				glm::vec4(vertice[face[2][0]], 1.0)
+			}
+		};
+
+		drawLine((_VPMatrix * pointsToDraw[0])[0], (_VPMatrix * pointsToDraw[0])[1],
+			 (_VPMatrix * pointsToDraw[1])[0], (_VPMatrix * pointsToDraw[1])[1]);
+
+		drawLine((_VPMatrix * pointsToDraw[1])[0], (_VPMatrix * pointsToDraw[1])[1],
+			 (_VPMatrix * pointsToDraw[2])[0], (_VPMatrix * pointsToDraw[2])[1]);
+
+		drawLine((_VPMatrix * pointsToDraw[2])[0], (_VPMatrix * pointsToDraw[2])[1],
+			 (_VPMatrix * pointsToDraw[0])[0], (_VPMatrix * pointsToDraw[0])[1]);
 	}
 }
 
@@ -184,4 +198,35 @@ Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 	_viewportHeight = viewportHeight;
 
 	_updatePixelInfo();
+}
+
+
+void
+Renderer::setViewMatrix(const glm::mat4& mat)
+{
+	_viewMatrix = mat;
+
+	_updateVPMatrix();
+}
+
+void
+Renderer::setProjectMatrix(const glm::mat4& mat)
+{
+	_projectMatrix = mat;
+
+	_updateVPMatrix();
+}
+
+void
+Renderer::_updatePixelInfo()
+{
+	_pixelSize = std::ceil((float) _viewportWidth / (float) _logicalWidth);
+
+	GLWrapper::setPointSize(_pixelSize);
+}
+
+void
+Renderer::_updateVPMatrix()
+{
+	_VPMatrix = _viewMatrix;
 }

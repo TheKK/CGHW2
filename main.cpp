@@ -1,5 +1,7 @@
 #include <SDL.h>
 #include <cstdlib>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "renderer.h"
 #include "glwrapper.h"
@@ -18,6 +20,8 @@ static int appIsRunning = 1;
 
 static int logicalWindowWidth = 3;
 static int logicalWindowHeight = 3;
+
+static glm::mat4 viewMatrix(1.0);
 
 ObjLoader objLoader("./cube.obj");
 
@@ -78,6 +82,16 @@ eventHandler(const SDL_Event& event)
 			gRenderer.windowResizeHandler(newWidth, newHeight);
 		}
 		break;
+
+	case SDL_MOUSEWHEEL:
+		if (event.wheel.y > 0) {
+			gRenderer.setViewMatrix(glm::scale(viewMatrix,
+							   glm::vec3(300.0)));
+		} else {
+			gRenderer.setViewMatrix(glm::scale(viewMatrix,
+							   glm::vec3(150.0)));
+		}
+		break;
 	}
 }
 
@@ -116,6 +130,7 @@ main(int argc, char* argv[])
 
 	gRenderer.setRenderLogicalSize(kInitWindowWidth, kInitWindowHeight);
 	gRenderer.windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
+	gRenderer.setViewMatrix(viewMatrix);
 
 	while (appIsRunning) {
 		while (SDL_PollEvent(&event))

@@ -31,17 +31,23 @@ ObjLoader::load(const std::string& filePath)
 		if (sscanf(lineBuffer.c_str(), "v %f %f %f",
 			   &floatTmp[0], &floatTmp[1], &floatTmp[2])) {
 
-			vertice.push_back(floatTmp);
+			vertice.emplace_back(floatTmp[0],
+					     floatTmp[1],
+					     floatTmp[2]);
 
 		} else if (sscanf(lineBuffer.c_str(), "vn %f %f %f",
 				  &floatTmp[0], &floatTmp[1], &floatTmp[2])) {
 
-			vertexNormals.push_back(floatTmp);
+			vertexNormals.emplace_back(floatTmp[0],
+						   floatTmp[1],
+						   floatTmp[2]);
 
 		} else if (sscanf(lineBuffer.c_str(), "vt %f %f %f",
 				  &floatTmp[0], &floatTmp[1], &floatTmp[2])) {
 
-			vertexUVs.push_back(floatTmp);
+			vertexUVs.emplace_back(floatTmp[0],
+					       floatTmp[1],
+					       floatTmp[2]);
 
 		} else if (sscanf(lineBuffer.c_str(),
 				  "f %u/%u/%u %u/%u/%u %u/%u/%u",
@@ -64,19 +70,19 @@ ObjLoader::clear()
 	faces.clear();
 }
 
-const std::vector<std::array<float, 3>>& 
+const std::vector<glm::vec3>& 
 ObjLoader::getVertice() const
 {
 	return vertice;
 }
 
-const std::vector<std::array<float, 3>>& 
+const std::vector<glm::vec3>& 
 ObjLoader::getVertexNormals() const
 {
 	return vertexNormals;
 }
 
-const std::vector<std::array<float, 3>>& 
+const std::vector<glm::vec3>& 
 ObjLoader::getVertexUVs() const
 {
 	return vertexUVs;

@@ -26,6 +26,9 @@ public:
 
 	void setRenderLogicalSize(int w, int h);
 	void windowResizeHandler(int windowWidth, int windowHeight);
+
+	void setViewMatrix(const glm::mat4& mat);
+	void setProjectMatrix(const glm::mat4& mat);
 private:
 	SDL_Window* _window;
 
@@ -33,7 +36,10 @@ private:
 	int _logicalWidth, _logicalHeight;
 	int _pixelSize;
 
+	glm::mat4 _viewMatrix, _projectMatrix, _VPMatrix;
+
 	void _updatePixelInfo();
+	void _updateVPMatrix();
 };
 
 #endif /* RENDERER_H */
