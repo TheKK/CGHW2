@@ -94,6 +94,16 @@ eventHandler(const SDL_Event& event)
 			break;
 		}
 		break;
+	case SDL_MOUSEMOTION:
+		if (event.motion.state == SDL_BUTTON_LMASK) {
+			viewMatrix = glm::translate(
+				viewMatrix,
+				glm::vec3((float) event.motion.xrel / kInitWindowWidth,
+					  (float) event.motion.yrel / kInitWindowHeight,
+					  0.f));
+			gRenderer.setViewMatrix(viewMatrix);
+		}
+		break;
 	case SDL_WINDOWEVENT:
 		if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
 			int newWidth = event.window.data1;
