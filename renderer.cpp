@@ -1,34 +1,50 @@
-#include "hw2.h"
-#include "glwrapper.h"
-
-#include <SDL_opengl.h>
-#include <cmath>
-#include <algorithm>
 #include <vector>
-#include <array>
+#include <cmath>
 
-#ifndef M_PI
-#define M_PI    3.1415926535
-#endif
+#include "objLoader.h"
+#include "glwrapper.h"
+#include "helper.h"
 
-#define DEGREE2ARC(DEGREE) ((DEGREE) * M_PI / 180.0)
+#include "renderer.h"
 
-struct Renderer {
-	int viewportWidth, viewportHeight;
-	int logicalWidth, logicalHeight;
-	int pixelSize;
-};
-static Renderer renderer;
-
-static void updatePixelInfo()
+Renderer::Renderer()
 {
-	renderer.pixelSize = floor((float) renderer.viewportWidth /
-				   (float) renderer.logicalWidth);
-
-	glPointSize(renderer.pixelSize);
 }
 
-void HW2::drawLine(int x0, int y0, int x1, int y1)
+Renderer::Renderer(SDL_Window* window, enum RendererType type):
+	_window(window)
+{
+	create(_window, type);
+}
+
+int
+Renderer::create(SDL_Window* window, enum RendererType type)
+{
+	int w, h;
+
+	if (!window)
+		return -1;
+
+	SDL_GetWindowSize(window, &w, &h);
+	_window = window;
+	_viewportWidth = _logicalWidth = w;
+	_viewportHeight = _logicalHeight = h;
+
+	_updatePixelInfo();
+
+	return 0;
+}
+
+void
+Renderer::_updatePixelInfo()
+{
+	_pixelSize = std::ceil((float) _viewportWidth / (float) _logicalWidth);
+
+	GLWrapper::setPointSize(_pixelSize);
+}
+
+void
+Renderer::drawLine(int x0, int y0, int x1, int y1)
 {
 	int dx, dy;
 	int error;
@@ -69,10 +85,11 @@ void HW2::drawLine(int x0, int y0, int x1, int y1)
 	}
 }
 
-void HW2::drawPixel(int x, int y)
+void
+Renderer::drawPixel(int x, int y)
 {
-	float coordXPerPiexl = 2.f / (float) renderer.logicalWidth;
-	float coordYPerPiexl = 2.f / (float) renderer.logicalHeight;
+	float coordXPerPiexl = 2.f / (float) _logicalWidth;
+	float coordYPerPiexl = 2.f / (float) _logicalHeight;
 
 	float realX = -1.0 + ((0.5 + (float) x) * coordXPerPiexl);
 	float realY = 1.0 - ((0.5 + (float) y) * coordYPerPiexl);
@@ -80,7 +97,8 @@ void HW2::drawPixel(int x, int y)
 	GLWrapper::drawPoint(realX, realY);
 }
 
-void HW2::drawCircle(int cx, int cy, int r, int seg)
+void
+Renderer::drawCircle(int cx, int cy, int r, int seg)
 {
 	float degreeForEachSeg = (360.0 / (float) seg);
 	float x1, y1, x2, y2;
@@ -97,11 +115,13 @@ void HW2::drawCircle(int cx, int cy, int r, int seg)
 			y1 = cy + (r * sin(DEGREE2ARC(degreeForEachSeg * i)));
 		}
 
-		HW2::drawLine(x1, y1, x2, y2);
+	
+		Renderer::drawLine(x1, y1, x2, y2);
 	}
 }
 
-void HW2::drawObj(const ObjLoader& loader)
+void
+Renderer::drawObj(const ObjLoader& loader)
 {
 	const std::vector<std::array<float, 3>>& vertice = loader.getVertice();
 	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces = loader.getFaces();;
@@ -116,19 +136,21 @@ void HW2::drawObj(const ObjLoader& loader)
 	}
 }
 
-void HW2::setRenderLogicalSize(int w, int h)
+void
+Renderer::setRenderLogicalSize(int w, int h)
 {
-	renderer.logicalWidth = w;
-	renderer.logicalHeight = h;
+	_logicalWidth = w;
+	_logicalHeight = h;
 
-	updatePixelInfo();
+	_updatePixelInfo();
 }
 
-void HW2::windowResizeHandler(int windowWidth, int windowHeight)
+void
+Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 {
 	float windowAspect = (float) windowWidth / (float) windowHeight;
-	float viewportAspect = ((float) renderer.logicalWidth /
-				(float) renderer.logicalHeight);
+	float viewportAspect = ((float) _logicalWidth /
+				(float) _logicalHeight);
 
 	int viewportWidth, viewportHeight;
 	int horizontalBlankOffset, virticalBlankOffset;
@@ -158,8 +180,8 @@ void HW2::windowResizeHandler(int windowWidth, int windowHeight)
 	GLWrapper::setViewport(horizontalBlankOffset, virticalBlankOffset,
 			       viewportWidth, viewportHeight);
 
-	renderer.viewportWidth = viewportWidth;
-	renderer.viewportHeight = viewportHeight;
+	_viewportWidth = viewportWidth;
+	_viewportHeight = viewportHeight;
 
-	updatePixelInfo();
+	_updatePixelInfo();
 }

@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <cstdlib>
 
-#include "hw2.h"
+#include "renderer.h"
 #include "glwrapper.h"
 #include "objLoader.h"
 
@@ -12,6 +12,7 @@ namespace {
 
 static SDL_Window* gWindow = nullptr;
 static SDL_GLContext gGLContext;
+static Renderer gRenderer;
 
 static int appIsRunning = 1;
 
@@ -35,6 +36,9 @@ init()
 		return -1;
 
 	gGLContext = SDL_GL_CreateContext(gWindow);
+
+	if (gRenderer.create(gWindow, RENDERER_SOFTWARERENDER) < 0)
+		return -1;
 
 	return 0;
 }
@@ -71,7 +75,7 @@ eventHandler(const SDL_Event& event)
 			int newWidth = event.window.data1;
 			int newHeight = event.window.data2;
 
-			HW2::windowResizeHandler(newWidth, newHeight);
+			gRenderer.windowResizeHandler(newWidth, newHeight);
 		}
 		break;
 	}
@@ -92,8 +96,8 @@ render()
 	 * Do what i want here
 	 */
 	GLWrapper::setDrawColor(0.2, 1.f, 0.f);
-	HW2::drawCircle(150, 150, 50, 8);
-	HW2::drawObj(objLoader);
+	gRenderer.drawCircle(150, 150, 50, 8);
+	gRenderer.drawObj(objLoader);
 
 	SDL_GL_SwapWindow(gWindow);
 }
@@ -110,8 +114,8 @@ main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	HW2::setRenderLogicalSize(kInitWindowWidth, kInitWindowHeight);
-	HW2::windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
+	gRenderer.setRenderLogicalSize(kInitWindowWidth, kInitWindowHeight);
+	gRenderer.windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
 
 	while (appIsRunning) {
 		while (SDL_PollEvent(&event))
