@@ -72,6 +72,26 @@ eventHandler(const SDL_Event& event)
 		case SDL_SCANCODE_Q:
 			appIsRunning = false;
 			break;
+		case SDL_SCANCODE_UP:
+			viewMatrix = glm::translate(viewMatrix,
+						    glm::vec3(0, 1, 0));
+			gRenderer.setViewMatrix(viewMatrix);
+			break;
+		case SDL_SCANCODE_DOWN:
+			viewMatrix = glm::translate(viewMatrix,
+						    glm::vec3(0, -1, 0));
+			gRenderer.setViewMatrix(viewMatrix);
+			break;
+		case SDL_SCANCODE_LEFT:
+			viewMatrix = glm::translate(viewMatrix,
+						    glm::vec3(1, 0, 0));
+			gRenderer.setViewMatrix(viewMatrix);
+			break;
+		case SDL_SCANCODE_RIGHT:
+			viewMatrix = glm::translate(viewMatrix,
+						    glm::vec3(-1, 0, 0));
+			gRenderer.setViewMatrix(viewMatrix);
+			break;
 		}
 		break;
 	case SDL_WINDOWEVENT:
@@ -85,11 +105,11 @@ eventHandler(const SDL_Event& event)
 
 	case SDL_MOUSEWHEEL:
 		if (event.wheel.y > 0) {
-			gRenderer.setViewMatrix(glm::scale(viewMatrix,
-							   glm::vec3(300.0)));
+			viewMatrix = glm::scale(viewMatrix, glm::vec3(1.5));
+			gRenderer.setViewMatrix(viewMatrix);
 		} else {
-			gRenderer.setViewMatrix(glm::scale(viewMatrix,
-							   glm::vec3(150.0)));
+			viewMatrix = glm::scale(viewMatrix, glm::vec3(0.5));
+			gRenderer.setViewMatrix(viewMatrix);
 		}
 		break;
 	}
