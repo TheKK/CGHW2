@@ -43,6 +43,7 @@ private:
 
 	int _viewportWidth, _viewportHeight;
 	int _logicalWidth, _logicalHeight;
+	float _coordXPerPiexl, _coordYPerPiexl;
 	int _pixelSize;
 
 	glm::mat4 _viewMatrix, _projectMatrix, _viewportMatrix;

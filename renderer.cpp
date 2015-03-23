@@ -122,11 +122,9 @@ Renderer::drawLine(int x0, int y0, int x1, int y1)
 void
 Renderer::drawPixel(int x, int y)
 {
-	float coordXPerPiexl = 2.f / (float) _logicalWidth;
-	float coordYPerPiexl = 2.f / (float) _logicalHeight;
 
-	float realX = -1.0 + ((0.5 + (float) x) * coordXPerPiexl);
-	float realY = 1.0 - ((0.5 + (float) y) * coordYPerPiexl);
+	float realX = ((0.5 + (float) x) * _coordXPerPiexl);
+	float realY = ((0.5 + (float) y) * _coordYPerPiexl);
 
 	GLWrapper::drawPoint(realX, realY);
 }
@@ -189,6 +187,9 @@ Renderer::setRenderLogicalSize(int w, int h)
 {
 	_logicalWidth = w;
 	_logicalHeight = h;
+
+	_coordXPerPiexl = 2.f / (float) _logicalWidth;
+	_coordYPerPiexl = 2.f / (float) _logicalHeight;
 
 	_updatePixelInfo();
 }
