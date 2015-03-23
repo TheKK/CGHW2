@@ -229,7 +229,7 @@ Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 	}
 
 	GLWrapper::setViewport(horizontalBlankOffset, virticalBlankOffset,
-		    viewportWidth, viewportHeight);
+			       viewportWidth, viewportHeight);
 
 	_viewportWidth = viewportWidth;
 	_viewportHeight = viewportHeight;
