@@ -282,11 +282,11 @@ Renderer::setProjectMatrix(const glm::mat4& mat)
 void
 Renderer::setViewPort(int x, int y, int w, int h)
 {
-	_viewportMatrix[0] = glm::vec4((float) w / 2.f, 0.f, 0.f, 0.f);
-	_viewportMatrix[1] = glm::vec4(0.f, (float) h / 2.f, 0.f, 0.f);
-	_viewportMatrix[2] = glm::vec4((float) w / 2.f + x,
-				       (float) h / 2.f + y,
-				       0, 0);
+	_viewportMatrix[0] = glm::vec4((float) w / 2.f, 0.f, 0.f,
+				       (float) w / 2.f + x);
+	_viewportMatrix[1] = glm::vec4(0.f, (float) h / 2.f, 0.f,
+				       (float) h / 2.f + y);
+	_viewportMatrix[2] = glm::vec4(0.f, 0.f, 0.f, 0.f);
 	_viewportMatrix[3] = glm::vec4(0.f, 0.f, 0.f, 1.f);
 
 	_updateVPMatrix();
@@ -303,5 +303,5 @@ Renderer::_updatePixelInfo()
 void
 Renderer::_updateVPMatrix()
 {
-	_VPMatrix = _viewportMatrix * _projectMatrix * _viewMatrix;
+	_VPMatrix = _projectMatrix * _viewMatrix;
 }
