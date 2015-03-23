@@ -4,14 +4,11 @@
 namespace GLWrapper
 {
 	void setViewport(int x, int y, int w, int h);
-
 	void setClearColor(double r, double g, double b, double a);
 	void clearScreen();
-
 	void setPointSize(int arg);
 	void setDrawColor(float r, float g, float b);
 	void drawPoint(float, float);
-	void drawLine(float x1, float y1, float x2, float y2);
 }
 
 #endif

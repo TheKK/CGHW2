@@ -19,9 +19,6 @@ static Renderer gRenderer;
 
 static int appIsRunning = 1;
 
-static int logicalWindowWidth = 3;
-static int logicalWindowHeight = 3;
-
 static glm::mat4 viewMatrix(1.0);
 
 static ModelInstance testInst;
