@@ -90,15 +90,19 @@ eventHandler(const SDL_Event& event)
 						    glm::vec3(-1, 0, 0));
 			gRenderer.setViewMatrix(viewMatrix);
 			break;
+		default:
+			break;
 		}
 		break;
 	case SDL_MOUSEMOTION:
 		if (event.motion.state == SDL_BUTTON_LMASK) {
-			viewMatrix = glm::translate(
-				viewMatrix,
-				glm::vec3((float) event.motion.xrel / kInitWindowWidth,
-					  (float) event.motion.yrel / kInitWindowHeight,
-					  0.f));
+			float dx =  ((float) event.motion.xrel /
+				     kInitWindowWidth);
+			float dy =  ((float) event.motion.yrel /
+				     kInitWindowHeight);
+
+			viewMatrix = glm::translate(viewMatrix,
+						    glm::vec3(dx, -dy, 0.f));
 			gRenderer.setViewMatrix(viewMatrix);
 		}
 		break;

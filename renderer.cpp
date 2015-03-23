@@ -179,7 +179,8 @@ void
 Renderer::renderAsset(const ModelAsset& asset, const glm::mat4& modelMatrix)
 {
 	const std::vector<glm::vec3>& vertice = asset.getVertice();
-	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces = asset.getFaces();;
+	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces =
+		asset.getFaces();
 	const glm::mat4 MVPMatrix = _VPMatrix * modelMatrix;
 	std::array<glm::vec4, 3> pointsToDraw;
 
@@ -294,7 +295,7 @@ Renderer::setViewPort(int x, int y, int w, int h)
 void
 Renderer::_updatePixelInfo()
 {
-	_pixelSize = std::round((float) _viewportWidth / (float) _logicalWidth);
+	_pixelSize = std::ceil((float) _viewportWidth / (float) _logicalWidth);
 
 	GLWrapper::setPointSize(_pixelSize);
 }
