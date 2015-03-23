@@ -1,6 +1,7 @@
 CXX = g++
 
 CXXFLAGS = -std=c++11 -g `pkg-config --cflags sdl2 gl`
+CXXFLAGS += -Wall -Wextra
 LIBS = `pkg-config --libs sdl2 gl` -lgtest
 
 OUT_EXE = HW2
