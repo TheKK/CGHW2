@@ -163,7 +163,7 @@ main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	gRenderer.setRenderLogicalSize(kInitWindowWidth, kInitWindowHeight);
+	gRenderer.setRenderLogicalSize(250, 250);
 	gRenderer.windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
 	gRenderer.setViewMatrix(viewMatrix);
 
