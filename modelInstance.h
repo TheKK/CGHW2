@@ -18,6 +18,7 @@ public:
 	void render(Renderer& renderer);
 
 	void setModelMatrix(const glm::mat4& matrix);
+	const glm::mat4& getModelMatrix() const;
 private:
 	std::shared_ptr<ModelAsset> _asset;
 

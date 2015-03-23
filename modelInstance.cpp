@@ -29,3 +29,9 @@ ModelInstance::setModelMatrix(const glm::mat4& matrix)
 {
 	_modelMatrix = matrix;
 }
+
+const glm::mat4&
+ModelInstance::getModelMatrix() const
+{
+	return _modelMatrix;
+}
