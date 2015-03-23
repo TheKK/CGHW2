@@ -5,7 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "renderer.h"
-#include "glwrapper.h"
 #include "modelInstance.h"
 
 namespace {
@@ -127,22 +126,25 @@ eventHandler(const SDL_Event& event)
 static void
 update()
 {
+	testInst2.setModelMatrix(glm::rotate(testInst2.getModelMatrix(),
+					     0.02f,
+					     glm::vec3(0.f, 1.0f, 0.f)));
 }
 
 static void
 render()
 {
-	GLWrapper::setClearColor(0.3, 0.3, 0.3, 1.f);
-	GLWrapper::clearScreen();
+	gRenderer.setClearColor(0.3, 0.3, 0.3, 1.f);
+	gRenderer.clear();
 
 	/*
 	 * Do what i want here
 	 */
-	GLWrapper::setDrawColor(0.2, 1.f, 0.f);
+	gRenderer.setDrawColor(0.2, 1.f, 0.f);
 	testInst.render(gRenderer);
 	testInst2.render(gRenderer);
 
-	SDL_GL_SwapWindow(gWindow);
+	gRenderer.present();
 }
 
 int

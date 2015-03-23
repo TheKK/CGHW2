@@ -120,6 +120,18 @@ Renderer::drawLine(int x0, int y0, int x1, int y1)
 }
 
 void
+Renderer::setClearColor(double r, double g, double b, double a)
+{
+	GLWrapper::setClearColor(r, g, b, a);
+}
+
+void
+Renderer::setDrawColor(float r, float g, float b)
+{
+	GLWrapper::setDrawColor(r, g, b);
+}
+
+void
 Renderer::drawPixel(int x, int y)
 {
 
@@ -149,6 +161,18 @@ Renderer::drawCircle(int cx, int cy, int r, int seg)
 
 		Renderer::drawLine(x1, y1, x2, y2);
 	}
+}
+
+void
+Renderer::clear()
+{
+	GLWrapper::clearScreen();
+}
+
+void
+Renderer::present()
+{
+	SDL_GL_SwapWindow(_window);
 }
 
 void
