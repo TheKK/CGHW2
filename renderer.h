@@ -8,6 +8,8 @@
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 
+#include "resourceManager.h"
+
 class ModelAsset;
 class ModelInstance;
 
@@ -55,7 +57,7 @@ private:
 	glm::mat4 _VPMatrix;
 
 	/* TODO resource manager */
-	std::map<std::string, std::weak_ptr<ModelAsset>> _modelAssets;
+	ResourceManager<ModelAsset> _modelAssetManager;
 
 	void _updatePixelInfo();
 	void _updateVPMatrix();

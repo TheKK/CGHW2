@@ -52,29 +52,7 @@ Renderer::create(SDL_Window* window, enum RendererType type)
 std::shared_ptr<ModelAsset>
 Renderer::loadObj(const std::string& filePath)
 {
-	std::shared_ptr<ModelAsset> assetToReturn;
-
-	if (_modelAssets.count(filePath) == 0) {
-		std::string msg = "create: " + filePath;
-
-		assetToReturn.reset(
-			new ModelAsset(filePath),
-			[this, filePath](ModelAsset* asset)
-			{
-				std::string msg = "delete: " + filePath;
-
-				delete asset;
-				this->_modelAssets.erase(filePath);
-				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-					    msg.c_str());
-			});
-		_modelAssets[filePath] = assetToReturn;
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, msg.c_str());
-	} else {
-		assetToReturn = _modelAssets[filePath].lock();
-	}
-
-	return assetToReturn;
+	return _modelAssetManager.aquire(filePath);
 }
 
 void
