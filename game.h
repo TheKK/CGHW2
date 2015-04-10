@@ -8,6 +8,7 @@
 #include "renderer.h"
 #include "camera.h"
 #include "modelInstance.h"
+#include "impNormalVerticeShader.h"
 
 class Game
 {
@@ -31,6 +32,8 @@ private:
 
 	ModelInstance testInst_;
 	ModelInstance testInst2_;
+
+	ImpNormalVerticeShader normalVerticeShader_;
 
 	void getOpt_(int argc, char* argv[]);
 	int initSystem_();

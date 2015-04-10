@@ -21,7 +21,7 @@ ModelInstance::load(Renderer& renderer, const std::string& filePath)
 void
 ModelInstance::render(Renderer& renderer)
 {
-	renderer.renderAsset(*_asset, _modelMatrix);
+	renderer.renderAsset(*_asset);
 }
 
 void

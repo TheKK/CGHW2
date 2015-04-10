@@ -7,11 +7,11 @@
 #include "glwrapper.h"
 #include "modelInstance.h"
 #include "helper.h"
+#include "iVerticeShader.h"
 
 #include "renderer.h"
 
-Renderer::Renderer():
-	_VPMatrix()
+Renderer::Renderer()
 {
 }
 
@@ -144,12 +144,11 @@ Renderer::present()
 }
 
 void
-Renderer::renderAsset(const ModelAsset& asset, const glm::mat4& modelMatrix)
+Renderer::renderAsset(const ModelAsset& asset)
 {
 	const std::vector<glm::vec3>& vertice = asset.getVertice();
 	const std::vector<std::array<std::array<uint32_t, 3>, 3>>& faces =
 		asset.getFaces();
-	_MVPMatrix = _VPMatrix * modelMatrix;
 	std::array<glm::vec4, 3> pointsToDraw;
 
 	for (const auto& face : faces) {
@@ -162,7 +161,7 @@ Renderer::renderAsset(const ModelAsset& asset, const glm::mat4& modelMatrix)
 		};
 
 		for (auto& e : pointsToDraw)
-			e = _runVerticeShader(e);
+			_currentVerticeShader->doVerticeShade(e);
 
 		_runFragmentShader(pointsToDraw);
 	}
@@ -221,18 +220,6 @@ Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 	_viewportHeight = viewportHeight;
 
 	_updatePixelInfo();
-}
-
-void
-Renderer::setVPMatrix(const glm::mat4 matrix)
-{
-	_VPMatrix = matrix;
-}
-
-glm::vec4
-Renderer::_runVerticeShader(const glm::vec4& point)
-{
-	return _MVPMatrix * point;
 }
 
 void

@@ -19,7 +19,8 @@ Game::Game(int argc, char* argv[]):
 	renderer_(),
 	appIsRunning_(true),
 	testInst_(renderer_, "cube.obj"),
-	testInst2_(renderer_, "cube.obj")
+	testInst2_(renderer_, "cube.obj"),
+	normalVerticeShader_()
 {
 	getOpt_(argc, argv);
 
@@ -183,10 +184,16 @@ Game::render_()
 	renderer_.setClearColor(0.3, 0.3, 0.3, 1.f);
 	renderer_.clear();
 
-	renderer_.setVPMatrix(camera_.getMatrix());
-
 	renderer_.setDrawColor(0.2, 1.f, 0.f);
+
+	normalVerticeShader_.setMVPMatrix(camera_.getMatrix() *
+					  testInst_.getModelMatrix());
+	renderer_.setVerticeShader(normalVerticeShader_);
 	testInst_.render(renderer_);
+
+	normalVerticeShader_.setMVPMatrix(camera_.getMatrix() *
+					  testInst2_.getModelMatrix());
+	renderer_.setVerticeShader(normalVerticeShader_);
 	testInst2_.render(renderer_);
 
 	renderer_.present();
