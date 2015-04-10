@@ -42,9 +42,7 @@ public:
 	void setRenderLogicalSize(int w, int h);
 	void windowResizeHandler(int windowWidth, int windowHeight);
 
-	void setViewMatrix(const glm::mat4& mat);
-	void setProjectMatrix(const glm::mat4& mat);
-	void setViewPort(int x, int y, int w, int h);
+	void setVPMatrix(const glm::mat4 matrix);
 private:
 	SDL_Window* _window;
 
@@ -52,13 +50,12 @@ private:
 	int _logicalWidth, _logicalHeight;
 	float _coordXPerPiexl, _coordYPerPiexl;
 	int _pixelSize;
+	glm::mat4 _VPMatrix, _MVPMatrix;
 
-	glm::mat4 _viewMatrix, _projectMatrix, _viewportMatrix;
-	glm::mat4 _VPMatrix;
-
-	/* TODO resource manager */
 	ResourceManager<ModelAsset> _modelAssetManager;
 
+	glm::vec4 _runVerticeShader(const glm::vec4& point);
+	void _runFragmentShader(const std::array<glm::vec4, 3>& points);
 	void _updatePixelInfo();
 	void _updateVPMatrix();
 };

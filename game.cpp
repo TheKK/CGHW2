@@ -1,13 +1,25 @@
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "timer.h"
+
 #include "game.h"
 
-namespace {
+namespace
+{
 	const int kInitWindowWidth = 800;
 	const int kInitWindowHeight = 800;
+
+	const float kFpsLimit = 60.f;
 }
 
-Game::Game(int argc, char* argv[])
+Game::Game(int argc, char* argv[]):
+	window_(nullptr),
+	glContext_(nullptr),
+	camera_(),
+	renderer_(),
+	appIsRunning_(true),
+	testInst_(renderer_, "cube.obj"),
+	testInst2_(renderer_, "cube.obj")
 {
 	getOpt_(argc, argv);
 
@@ -27,14 +39,38 @@ void
 Game::execute()
 {
 	SDL_Event event;
+	Timer fpsGaurd, fpsCaculator;
+	int frameCounter;
+
+	fpsCaculator.start();
+	frameCounter = 1;
 
 	while (appIsRunning_) {
+		fpsGaurd.start();
+
 		while (SDL_PollEvent(&event))
 			eventHandler_(event);
 		update_();
 		render_();
 
-		SDL_Delay(30);
+		if (fpsCaculator.getTicks() >= 1000.0) {
+			std::string newTitle;
+
+			newTitle = "FPS: ";
+			newTitle += std::to_string((float) frameCounter /
+						   fpsCaculator.getTicks() *
+						   1000.0);
+
+			frameCounter = 0;
+			fpsCaculator.start();
+
+			SDL_SetWindowTitle(window_, newTitle.c_str());
+		} else {
+			++frameCounter;
+		}
+
+		if (fpsGaurd.getTicks() < (1000.0 / kFpsLimit))
+			SDL_Delay((1000.0 / kFpsLimit) - fpsGaurd.getTicks());
 	}
 }
 
@@ -73,10 +109,8 @@ Game::initResource_()
 	renderer_.setRenderLogicalSize(250, 250);
 	renderer_.windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
 
-	testInst_.load(renderer_, "cube.obj");
-	testInst2_.load(renderer_, "cube.obj");
-	testInst2_.setModelMatrix(glm::translate(glm::mat4(1.0),
-						glm::vec3(10.f, 0.f, 0.f)));
+	testInst2_.setModelMatrix(glm::translate(glm::mat4(0.f),
+						 glm::vec3(10.f, 0.f, 0.f)));
 
 	return 0;
 }
@@ -123,15 +157,14 @@ Game::eventHandler_(const SDL_Event& event)
 		}
 		break;
 	case SDL_MOUSEMOTION:
-		camera_.offsetOrientation(event.motion.xrel, event.motion.yrel);
+		camera_.offsetOrientation((float) event.motion.xrel / 100.f,
+					  (float) event.motion.yrel /-100.f);
 		break;
-	case SDL_WINDOWEVENT:
-		if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-			int newWidth = event.window.data1;
-			int newHeight = event.window.data2;
-
-			renderer_.windowResizeHandler(newWidth, newHeight);
-		}
+	case SDL_MOUSEWHEEL:
+		if (event.wheel.y > 0)
+			camera_.offsetFov(0.1f);
+		else
+			camera_.offsetFov(-0.1f);
 		break;
 	}
 }
@@ -139,7 +172,7 @@ Game::eventHandler_(const SDL_Event& event)
 void
 Game::update_()
 {
-	testInst2_.setModelMatrix(glm::rotate(testInst2_.getModelMatrix(),
+	testInst_.setModelMatrix(glm::rotate(testInst_.getModelMatrix(),
 					     0.02f,
 					     glm::vec3(0.f, 1.0f, 0.f)));
 }
@@ -150,11 +183,11 @@ Game::render_()
 	renderer_.setClearColor(0.3, 0.3, 0.3, 1.f);
 	renderer_.clear();
 
-	renderer_.setViewMatrix(camera_.getViewMatrix());
+	renderer_.setVPMatrix(camera_.getMatrix());
 
 	renderer_.setDrawColor(0.2, 1.f, 0.f);
 	testInst_.render(renderer_);
-	testInst2_.render(renderer_);
+	//testInst2_.render(renderer_);
 
 	renderer_.present();
 }

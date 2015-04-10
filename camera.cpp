@@ -8,9 +8,13 @@ namespace
 }
 
 Camera::Camera():
-	_position(0.f),
+	_position(0.f, 0.f, 3.f),
 	_horizontalAngle(0.f),
-	_verticalAngle(0.f)
+	_verticalAngle(0.f),
+	_nearPlane(1.f),
+	_farPlane(20.f),
+	_fov(50.f),
+	_viewportAspectRatio(1.f)
 {
 }
 
@@ -44,14 +48,27 @@ Camera::offsetOrientation(float angleRight, float angleUp)
 glm::mat4
 Camera::getOrientation() const
 {
-	glm::mat4 viewMatrix;
+	glm::mat4 orientation;
 
-	viewMatrix = glm::rotate(viewMatrix, -_horizontalAngle,
-				 glm::vec3(0, 1, 0));
-	viewMatrix = glm::rotate(viewMatrix, -_verticalAngle,
-				 glm::vec3(0, 1, 0));
+	orientation = glm::rotate(orientation, _verticalAngle,
+				  glm::vec3(1, 0, 0));
+	orientation = glm::rotate(orientation, _horizontalAngle,
+				  glm::vec3(0, 1, 0));
 
-	return viewMatrix;
+	return orientation;
+}
+
+glm::mat4
+Camera::getProjection() const
+{
+	return glm::perspective(_fov, _viewportAspectRatio,
+				_nearPlane, _farPlane);
+}
+
+glm::mat4
+Camera::getView() const
+{
+	return (getOrientation() * glm::translate(glm::mat4(), -_position));
 }
 
 glm::vec3
@@ -95,9 +112,9 @@ Camera::getBackwrad() const
 }
 
 glm::mat4
-Camera::getViewMatrix() const
+Camera::getMatrix() const
 {
-	return (getOrientation() * glm::translate(glm::mat4(), -_position));
+	return getProjection() * getView();
 }
 
 void
