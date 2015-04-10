@@ -1,18 +1,20 @@
+# Check if pkg-config is installed, we need it for building CFLAGS/LIBS
+ifeq ($(shell which pkg-config 2>/dev/null 1>/dev/null || echo 1),1)
+$(error "pkg-config was not found")
+endif
+
 CXX = g++
-
-CXXFLAGS = -std=c++11 -g `pkg-config --cflags sdl2 gl`
+CXXFLAGS += -std=c++11 -g ``
 CXXFLAGS += -Wall -Wextra
-LIBS = `pkg-config --libs sdl2 gl` -lgtest
+CXXFLAGS += $(shell pkg-config --cflags sdl2 gl)
+LIBS += $(shell pkg-config --libs sdl2 gl)
 
-OUT_EXE = HW2
+SRCS := $(wildcard *.cpp)
+OBJS := $(SRCS:.cpp=.o)
 
-all: $(OUT_EXE)
+all: sre
 
-$(OUT_EXE): main.o renderer.o glwrapper.o modelAsset.o modelInstance.o
-	@$(CXX) $^ $(LIBS) -o $@
-	@echo "     LD     " $(notdir $@)
-
-testRunner: test/testRunner.o test/objLoader_test.o objLoader.o
+sre: $(OBJS)
 	@$(CXX) $^ $(LIBS) -o $@
 	@echo "     LD     " $(notdir $@)
 
@@ -23,6 +25,3 @@ testRunner: test/testRunner.o test/objLoader_test.o objLoader.o
 .PHONY: clean test
 clean:
 	@rm *.o $(OUT_EXE)
-
-test: testRunner
-	@./$<
