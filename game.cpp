@@ -109,8 +109,8 @@ Game::initResource_()
 	renderer_.setRenderLogicalSize(250, 250);
 	renderer_.windowResizeHandler(kInitWindowWidth, kInitWindowHeight);
 
-	testInst2_.setModelMatrix(glm::translate(glm::mat4(0.f),
-						 glm::vec3(10.f, 0.f, 0.f)));
+	testInst2_.setModelMatrix(glm::translate(glm::mat4(),
+						 glm::vec3(5.f, 0.f, 0.f)));
 
 	return 0;
 }
@@ -141,10 +141,10 @@ Game::eventHandler_(const SDL_Event& event)
 			appIsRunning_ = false;
 			break;
 		case SDL_SCANCODE_A:
-			camera_.offsetPosition(camera_.getLeft());
+			camera_.offsetPosition(camera_.getRight());
 			break;
 		case SDL_SCANCODE_D:
-			camera_.offsetPosition(camera_.getRight());
+			camera_.offsetPosition(camera_.getLeft());
 			break;
 		case SDL_SCANCODE_W:
 			camera_.offsetPosition(camera_.getForward());
@@ -187,7 +187,7 @@ Game::render_()
 
 	renderer_.setDrawColor(0.2, 1.f, 0.f);
 	testInst_.render(renderer_);
-	//testInst2_.render(renderer_);
+	testInst2_.render(renderer_);
 
 	renderer_.present();
 }

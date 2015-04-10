@@ -242,9 +242,12 @@ Renderer::_runFragmentShader(const std::array<glm::vec4, 3>& points)
 	const glm::vec4& pointA = points[1];
 	const glm::vec4& pointB = points[2];
 
-	GLWrapper::drawPoint(pointO.x / pointO.w, pointO.y / pointO.w);
-	GLWrapper::drawPoint(pointA.x / pointA.w, pointA.y / pointA.w);
-	GLWrapper::drawPoint(pointB.x / pointB.w, pointB.y / pointB.w);
+	if (std::abs(pointO.z / pointO.w) <= 1.f)
+		GLWrapper::drawPoint(pointO.x / pointO.w, pointO.y / pointO.w);
+	if (std::abs(pointA.z / pointA.w) <= 1.f)
+		GLWrapper::drawPoint(pointA.x / pointA.w, pointA.y / pointA.w);
+	if (std::abs(pointB.z / pointB.w) <= 1.f)
+		GLWrapper::drawPoint(pointB.x / pointB.w, pointB.y / pointB.w);
 }
 
 void
