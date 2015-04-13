@@ -8,6 +8,7 @@
 #include "modelInstance.h"
 #include "helper.h"
 #include "iVerticeShader.h"
+#include "iFragmentShader.h"
 
 #include "renderer.h"
 
@@ -241,29 +242,20 @@ Renderer::_rasterization(std::array<glm::vec4, 3>& points)
 	glm::vec4 colorToDraw;
 
 	if (std::abs(pointO.z / pointO.w) <= 1.f) {
-		colorToDraw = _runFragmentShader(pointO);
+		colorToDraw = _currentFragmentShader->doFragmentShade(pointO);
 		setDrawColor(colorToDraw[0], colorToDraw[1], colorToDraw[2]);
 		drawPixel(pointO.x / pointO.w, pointO.y / pointO.w);
 	}
 	if (std::abs(pointA.z / pointA.w) <= 1.f) {
-		colorToDraw = _runFragmentShader(pointA);
+		colorToDraw = _currentFragmentShader->doFragmentShade(pointA);
 		setDrawColor(colorToDraw[0], colorToDraw[1], colorToDraw[2]);
 		drawPixel(pointA.x / pointA.w, pointA.y / pointA.w);
 	}
 	if (std::abs(pointB.z / pointB.w) <= 1.f) {
-		colorToDraw = _runFragmentShader(pointB);
+		colorToDraw = _currentFragmentShader->doFragmentShade(pointB);
 		setDrawColor(colorToDraw[0], colorToDraw[1], colorToDraw[2]);
 		drawPixel(pointB.x / pointB.w, pointB.y / pointB.w);
 	}
-}
-
-glm::vec4
-Renderer::_runFragmentShader(glm::vec4& point)
-{
-	return glm::vec4((float) rand() / (float) RAND_MAX,
-			 (float) rand() / (float) RAND_MAX,
-			 (float) rand() / (float) RAND_MAX,
-			 1.f);
 }
 
 void

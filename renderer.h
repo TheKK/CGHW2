@@ -13,6 +13,7 @@
 class ModelAsset;
 class ModelInstance;
 class IVerticeShader;
+class IFragmentShader;
 
 enum RendererType {
 	RENDERER_SOFTWARERENDER = 0x00,
@@ -40,7 +41,11 @@ public:
 	void present();
 
 	void setVerticeShader(IVerticeShader& vs)
-	{ _currentVerticeShader = &vs; };
+	{ _currentVerticeShader = &vs; }
+
+	void setFragmentShader(IFragmentShader& fs)
+	{ _currentFragmentShader = &fs; }
+
 
 	void renderAsset(const ModelAsset& asset);
 
@@ -55,11 +60,11 @@ private:
 	int _pixelSize;
 
 	IVerticeShader* _currentVerticeShader = nullptr;
+	IFragmentShader* _currentFragmentShader = nullptr;
 
 	ResourceManager<ModelAsset> _modelAssetManager;
 
 	void _rasterization(std::array<glm::vec4, 3>& points);
-	glm::vec4 _runFragmentShader(glm::vec4& point);
 	void _updatePixelInfo();
 };
 

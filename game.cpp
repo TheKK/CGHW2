@@ -20,7 +20,8 @@ Game::Game(int argc, char* argv[]):
 	appIsRunning_(true),
 	testInst_(renderer_, "cube.obj"),
 	testInst2_(renderer_, "cube.obj"),
-	normalVerticeShader_()
+	normalVerticeShader_(),
+	randomFragmentShader_()
 {
 	getOpt_(argc, argv);
 
@@ -101,6 +102,8 @@ Game::initSystem_()
 	if (renderer_.create(window_, RENDERER_SOFTWARERENDER) < 0)
 		return -1;
 
+	srand(time(nullptr));
+
 	return 0;
 }
 
@@ -112,6 +115,11 @@ Game::initResource_()
 
 	testInst2_.setModelMatrix(glm::translate(glm::mat4(),
 						 glm::vec3(5.f, 0.f, 0.f)));
+
+	randomFragmentShader_.setColor(
+		glm::vec3((float) rand() / (float) RAND_MAX,
+			  (float) rand() / (float) RAND_MAX,
+			  (float) rand() / (float) RAND_MAX));
 
 	return 0;
 }
@@ -184,16 +192,15 @@ Game::render_()
 	renderer_.setClearColor(0.3, 0.3, 0.3, 1.f);
 	renderer_.clear();
 
-	renderer_.setDrawColor(0.2, 1.f, 0.f);
+	renderer_.setVerticeShader(normalVerticeShader_);
+	renderer_.setFragmentShader(randomFragmentShader_);
 
 	normalVerticeShader_.setMVPMatrix(camera_.getMatrix() *
 					  testInst_.getModelMatrix());
-	renderer_.setVerticeShader(normalVerticeShader_);
 	testInst_.render(renderer_);
 
 	normalVerticeShader_.setMVPMatrix(camera_.getMatrix() *
 					  testInst2_.getModelMatrix());
-	renderer_.setVerticeShader(normalVerticeShader_);
 	testInst2_.render(renderer_);
 
 	renderer_.present();
