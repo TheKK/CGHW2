@@ -103,10 +103,19 @@ void
 Renderer::drawPixel(int x, int y)
 {
 
-	float realX = ((0.5 + (float) x) * _coordXPerPiexl);
-	float realY = ((0.5 + (float) y) * _coordYPerPiexl);
+	float realX = ((0.5f + (float) x) * _coordXPerPiexl);
+	float realY = ((0.5f + (float) y) * _coordYPerPiexl);
 
 	GLWrapper::drawPoint(realX, realY);
+}
+
+void
+Renderer::drawPixel(float x, float y)
+{
+	int pixelX = std::ceil((x + 1.f) / _coordXPerPiexl);
+	int pixelY = std::ceil((y + 1.f) / _coordYPerPiexl);
+
+	drawPixel(pixelX, pixelY);
 }
 
 void
@@ -230,11 +239,11 @@ Renderer::_runFragmentShader(const std::array<glm::vec4, 3>& points)
 	const glm::vec4& pointB = points[2];
 
 	if (std::abs(pointO.z / pointO.w) <= 1.f)
-		GLWrapper::drawPoint(pointO.x / pointO.w, pointO.y / pointO.w);
+		drawPixel(pointO.x / pointO.w, pointO.y / pointO.w);
 	if (std::abs(pointA.z / pointA.w) <= 1.f)
-		GLWrapper::drawPoint(pointA.x / pointA.w, pointA.y / pointA.w);
+		drawPixel(pointA.x / pointA.w, pointA.y / pointA.w);
 	if (std::abs(pointB.z / pointB.w) <= 1.f)
-		GLWrapper::drawPoint(pointB.x / pointB.w, pointB.y / pointB.w);
+		drawPixel(pointB.x / pointB.w, pointB.y / pointB.w);
 }
 
 void

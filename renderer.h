@@ -32,6 +32,7 @@ public:
 	void setClearColor(double r, double g, double b, double a);
 	void setDrawColor(float r, float g, float b);
 	void drawPixel(int x, int y);
+	void drawPixel(float x, float y);
 	void drawLine(int x0, int y0, int x1, int y1);
 	void drawCircle(int x, int y, int r, int seg);
 
