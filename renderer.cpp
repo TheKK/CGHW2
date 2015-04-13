@@ -232,26 +232,38 @@ Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 }
 
 void 
-Renderer::_rasterization(const std::array<glm::vec4, 3>& points)
+Renderer::_rasterization(std::array<glm::vec4, 3>& points)
 {
-	const glm::vec4& pointO = points[0];
-	const glm::vec4& pointA = points[1];
-	const glm::vec4& pointB = points[2];
+	glm::vec4& pointO = points[0];
+	glm::vec4& pointA = points[1];
+	glm::vec4& pointB = points[2];
 
-	_runFragmentShader(pointO);
-	_runFragmentShader(pointA);
-	_runFragmentShader(pointB);
+	glm::vec4 colorToDraw;
+
+	if (std::abs(pointO.z / pointO.w) <= 1.f) {
+		colorToDraw = _runFragmentShader(pointO);
+		setDrawColor(colorToDraw[0], colorToDraw[1], colorToDraw[2]);
+		drawPixel(pointO.x / pointO.w, pointO.y / pointO.w);
+	}
+	if (std::abs(pointA.z / pointA.w) <= 1.f) {
+		colorToDraw = _runFragmentShader(pointA);
+		setDrawColor(colorToDraw[0], colorToDraw[1], colorToDraw[2]);
+		drawPixel(pointA.x / pointA.w, pointA.y / pointA.w);
+	}
+	if (std::abs(pointB.z / pointB.w) <= 1.f) {
+		colorToDraw = _runFragmentShader(pointB);
+		setDrawColor(colorToDraw[0], colorToDraw[1], colorToDraw[2]);
+		drawPixel(pointB.x / pointB.w, pointB.y / pointB.w);
+	}
 }
 
-void
-Renderer::_runFragmentShader(const glm::vec4& point)
+glm::vec4
+Renderer::_runFragmentShader(glm::vec4& point)
 {
-	if (std::abs(point.z / point.w) <= 1.f) {
-		GLWrapper::setDrawColor((float) rand() / (float) RAND_MAX,
-					(float) rand() / (float) RAND_MAX,
-					(float) rand() / (float) RAND_MAX);
-		drawPixel(point.x / point.w, point.y / point.w);
-	}
+	return glm::vec4((float) rand() / (float) RAND_MAX,
+			 (float) rand() / (float) RAND_MAX,
+			 (float) rand() / (float) RAND_MAX,
+			 1.f);
 }
 
 void
