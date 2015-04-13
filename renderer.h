@@ -58,7 +58,8 @@ private:
 
 	ResourceManager<ModelAsset> _modelAssetManager;
 
-	void _runFragmentShader(const std::array<glm::vec4, 3>& points);
+	void _rasterization(const std::array<glm::vec4, 3>& points);
+	void _runFragmentShader(const glm::vec4& point);
 	void _updatePixelInfo();
 };
 

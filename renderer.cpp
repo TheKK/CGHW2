@@ -172,7 +172,7 @@ Renderer::renderAsset(const ModelAsset& asset)
 		for (auto& e : pointsToDraw)
 			_currentVerticeShader->doVerticeShade(e);
 
-		_runFragmentShader(pointsToDraw);
+		_rasterization(pointsToDraw);
 	}
 }
 
@@ -231,19 +231,27 @@ Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 	_updatePixelInfo();
 }
 
-void
-Renderer::_runFragmentShader(const std::array<glm::vec4, 3>& points)
+void 
+Renderer::_rasterization(const std::array<glm::vec4, 3>& points)
 {
 	const glm::vec4& pointO = points[0];
 	const glm::vec4& pointA = points[1];
 	const glm::vec4& pointB = points[2];
 
-	if (std::abs(pointO.z / pointO.w) <= 1.f)
-		drawPixel(pointO.x / pointO.w, pointO.y / pointO.w);
-	if (std::abs(pointA.z / pointA.w) <= 1.f)
-		drawPixel(pointA.x / pointA.w, pointA.y / pointA.w);
-	if (std::abs(pointB.z / pointB.w) <= 1.f)
-		drawPixel(pointB.x / pointB.w, pointB.y / pointB.w);
+	_runFragmentShader(pointO);
+	_runFragmentShader(pointA);
+	_runFragmentShader(pointB);
+}
+
+void
+Renderer::_runFragmentShader(const glm::vec4& point)
+{
+	if (std::abs(point.z / point.w) <= 1.f) {
+		GLWrapper::setDrawColor((float) rand() / (float) RAND_MAX,
+					(float) rand() / (float) RAND_MAX,
+					(float) rand() / (float) RAND_MAX);
+		drawPixel(point.x / point.w, point.y / point.w);
+	}
 }
 
 void
