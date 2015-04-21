@@ -2,6 +2,7 @@
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include "modelAsset.h"
 #include "glwrapper.h"
@@ -12,12 +13,14 @@
 
 #include "renderer.h"
 
-Renderer::Renderer()
+Renderer::Renderer():
+	_frameBuffer(10, 10)
 {
 }
 
 Renderer::Renderer(SDL_Window* window, enum RendererType type):
-	_window(window)
+	_window(window),
+	_frameBuffer(10, 10)
 {
 	create(_window, type);
 }
@@ -32,10 +35,8 @@ Renderer::create(SDL_Window* window, enum RendererType type)
 
 	SDL_GetWindowSize(window, &w, &h);
 	_window = window;
-	_viewportWidth = _logicalWidth = w;
-	_viewportHeight = _logicalHeight = h;
-
-	_updatePixelInfo();
+	_viewportWidth = w;
+	_viewportHeight = h;
 
 	return 0;
 }
@@ -91,32 +92,29 @@ Renderer::drawLine(int x0, int y0, int x1, int y1)
 void
 Renderer::setClearColor(double r, double g, double b, double a)
 {
-	GLWrapper::setClearColor(r, g, b, a);
+	glm::vec4 color(r, g, b, 1.f);
+
+	_frameBuffer.setClearColor(color);
 }
 
 void
 Renderer::setDrawColor(float r, float g, float b)
 {
-	GLWrapper::setDrawColor(r, g, b);
+	glm::vec4 color(r, g, b, 1.f);
+
+	_frameBuffer.setDrawColor(color);
 }
 
 void
 Renderer::drawPixel(int x, int y)
 {
-
-	float realX = ((0.5f + (float) x) * _coordXPerPiexl);
-	float realY = ((0.5f + (float) y) * _coordYPerPiexl);
-
-	GLWrapper::drawPoint(realX, realY);
+	_frameBuffer.drawPixel((uint32_t) x, (uint32_t) y);	
 }
 
 void
 Renderer::drawPixel(float x, float y)
 {
-	int pixelX = std::ceil((x + 1.f) / _coordXPerPiexl);
-	int pixelY = std::ceil((y + 1.f) / _coordYPerPiexl);
-
-	drawPixel(pixelX, pixelY);
+	_frameBuffer.drawPixel(x, y);
 }
 
 void
@@ -144,12 +142,14 @@ Renderer::drawCircle(int cx, int cy, int r, int seg)
 void
 Renderer::clear()
 {
-	GLWrapper::clearScreen();
+	_frameBuffer.clear(COLOR_BUFFER_BIT);
 }
 
 void
 Renderer::present()
 {
+	_frameBuffer.upload();
+
 	SDL_GL_SwapWindow(_window);
 }
 
@@ -180,56 +180,47 @@ Renderer::renderAsset(const ModelAsset& asset)
 void
 Renderer::setRenderLogicalSize(int w, int h)
 {
-	_logicalWidth = w;
-	_logicalHeight = h;
-
-	_coordXPerPiexl = 2.f / (float) _logicalWidth;
-	_coordYPerPiexl = 2.f / (float) _logicalHeight;
-
-	_updatePixelInfo();
 }
 
 void
 Renderer::windowResizeHandler(int windowWidth, int windowHeight)
 {
-	float windowAspect = (float) windowWidth / (float) windowHeight;
-	float viewportAspect = ((float) _logicalWidth /
-				(float) _logicalHeight);
+	//float windowAspect = (float) windowWidth / (float) windowHeight;
+	//float viewportAspect = ((float) _logicalWidth /
+				//(float) _logicalHeight);
 
-	int viewportWidth, viewportHeight;
-	int horizontalBlankOffset, virticalBlankOffset;
+	//int viewportWidth, viewportHeight;
+	//int horizontalBlankOffset, virticalBlankOffset;
 
-	if (windowAspect > viewportAspect) {
-		viewportWidth = std::round((float) windowHeight *
-					   viewportAspect);
-		viewportHeight = windowHeight;
+	//if (windowAspect > viewportAspect) {
+		//viewportWidth = std::round((float) windowHeight *
+					   //viewportAspect);
+		//viewportHeight = windowHeight;
 
-		horizontalBlankOffset = (windowWidth - viewportWidth) / 2;
-		virticalBlankOffset = 0;
+		//horizontalBlankOffset = (windowWidth - viewportWidth) / 2;
+		//virticalBlankOffset = 0;
 
-	} else if (windowAspect < viewportAspect) {
-		viewportWidth = windowWidth;
-		viewportHeight = std::round((float) windowWidth /
-					    viewportAspect);
+	//} else if (windowAspect < viewportAspect) {
+		//viewportWidth = windowWidth;
+		//viewportHeight = std::round((float) windowWidth /
+					    //viewportAspect);
 
-		horizontalBlankOffset = 0;
-		virticalBlankOffset = (windowHeight - viewportHeight) / 2;
+		//horizontalBlankOffset = 0;
+		//virticalBlankOffset = (windowHeight - viewportHeight) / 2;
 
-	} else if (windowAspect == viewportAspect) {
-		viewportWidth = windowWidth;
-		viewportHeight = windowHeight;
+	//} else if (windowAspect == viewportAspect) {
+		//viewportWidth = windowWidth;
+		//viewportHeight = windowHeight;
 
-		horizontalBlankOffset = 0;
-		virticalBlankOffset = 0;
-	}
+		//horizontalBlankOffset = 0;
+		//virticalBlankOffset = 0;
+	//}
 
-	GLWrapper::setViewport(horizontalBlankOffset, virticalBlankOffset,
-			       viewportWidth, viewportHeight);
+	//GLWrapper::setViewport(horizontalBlankOffset, virticalBlankOffset,
+			       //viewportWidth, viewportHeight);
 
-	_viewportWidth = viewportWidth;
-	_viewportHeight = viewportHeight;
-
-	_updatePixelInfo();
+	//_viewportWidth = viewportWidth;
+	//_viewportHeight = viewportHeight;
 }
 
 void 
@@ -256,12 +247,4 @@ Renderer::_rasterization(std::array<glm::vec4, 3>& points)
 		setDrawColor(colorToDraw[0], colorToDraw[1], colorToDraw[2]);
 		drawPixel(pointB.x / pointB.w, pointB.y / pointB.w);
 	}
-}
-
-void
-Renderer::_updatePixelInfo()
-{
-	_pixelSize = std::ceil((float) _viewportWidth / (float) _logicalWidth);
-
-	GLWrapper::setPointSize(_pixelSize);
 }

@@ -12,8 +12,9 @@ main(int argc, char* argv[])
 
 		game.execute();
 
-	} catch (std::runtime_error e) {
+	} catch (const std::exception& e) {
 		fprintf(stderr, "%s\n", e.what());
+		fprintf(stderr, "[Main] Program shutdown\n");
 
 		return EXIT_FAILURE;
 	}

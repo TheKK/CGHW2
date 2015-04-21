@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 
 #include "resourceManager.h"
+#include "frameBuffer.h"
 
 class ModelAsset;
 class ModelInstance;
@@ -53,11 +54,8 @@ public:
 	void windowResizeHandler(int windowWidth, int windowHeight);
 private:
 	SDL_Window* _window;
-
 	int _viewportWidth, _viewportHeight;
-	int _logicalWidth, _logicalHeight;
-	float _coordXPerPiexl, _coordYPerPiexl;
-	int _pixelSize;
+	FrameBuffer _frameBuffer;
 
 	IVerticeShader* _currentVerticeShader = nullptr;
 	IFragmentShader* _currentFragmentShader = nullptr;
@@ -65,7 +63,6 @@ private:
 	ResourceManager<ModelAsset> _modelAssetManager;
 
 	void _rasterization(std::array<glm::vec4, 3>& points);
-	void _updatePixelInfo();
 };
 
 #endif /* RENDERER_H */

@@ -1,7 +1,7 @@
+#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "timer.h"
-
 #include "game.h"
 
 namespace
@@ -26,7 +26,6 @@ Game::Game(int argc, char* argv[]):
 	getOpt_(argc, argv);
 
 	if (initSystem_() || initResource_()) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
 
 		throw std::runtime_error("[Game] Failed while construct");
 	}
@@ -92,14 +91,23 @@ Game::initSystem_()
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		kInitWindowWidth, kInitWindowHeight,
 		SDL_WINDOW_OPENGL);
-	if (!window_)
+	if (!window_) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
 		return -1;
+	}
 
 	glContext_ = SDL_GL_CreateContext(window_);
-	if (!glContext_)
+	if (!glContext_) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
 		return -1;
+	}
 
-	if (renderer_.create(window_, RENDERER_SOFTWARERENDER) < 0)
+	if (renderer_.create(window_, RENDERER_SOFTWARERENDER) < 0) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", SDL_GetError());
+		return -1;
+	}
+
+	if (glewInit() != GLEW_OK)
 		return -1;
 
 	srand(time(nullptr));
