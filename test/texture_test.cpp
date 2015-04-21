@@ -9,12 +9,12 @@ TEST(texture_test, constructWithZero)
 
 TEST(texture_test, constructWithNonzero)
 {
-	ASSERT_NO_THROW(Texture<int> tex(30, 23));
+	ASSERT_NO_THROW(Texture<int>(30, 23));
 }
 
 TEST(texture_test, constructWithNegtive)
 {
-	ASSERT_ANY_THROW(Texture<int> tex(-30, 23));
+	ASSERT_ANY_THROW(Texture<int>(-30, 23));
 }
 
 TEST(texture_test, setDataAt)
